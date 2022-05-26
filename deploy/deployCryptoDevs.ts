@@ -1,21 +1,23 @@
 /* eslint-disable node/no-unpublished-import */
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/dist/types";
+const { WHITELIST_CONTRACT_ADDRESS, METADATA_URL } = require("../constants");
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
-  const { deploy } = deployments;
+  const { deploy, log } = deployments;
 
   const { deployer } = await getNamedAccounts();
 
-  await deploy("EtherWallet", {
+  const deployedCryptoDevsContract = await deploy("CryptoDevs", {
     // <-- name of the deployment
-    contract: "EtherWallet", // <-- name of the contract/artifact(more specifically) to deploy
+    contract: "CryptoDevs", // <-- name of the contract/artifact(more specifically) to deploy
     from: deployer, // <-- account to deploy from
-    args: [], // <-- contract constructor arguments. Here it has nothing
+    args: [METADATA_URL, WHITELIST_CONTRACT_ADDRESS], // <-- contract constructor arguments. Here it has nothing
     log: true, // <-- log the address and gas used in the console
   });
+  log(`Contract deployed at ${deployedCryptoDevsContract.address}`);
 };
 
 export default func;
-func.tags = ["EtherWallet"];
+func.tags = ["CryptoDevs"];
