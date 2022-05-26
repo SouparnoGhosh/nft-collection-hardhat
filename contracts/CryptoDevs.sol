@@ -156,6 +156,17 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         whitelist = IWhitelist(whitelistContract);
     }
 
+    function setPaused(bool val) public onlyOwner {
+        _paused = val;
+    }
+
+    function withdraw() external onlyOwner {
+        address _owner = owner();
+        uint256 amount = address(this).balance;
+        (bool success, ) = _owner.call{value: amount}("");
+        require(success, "Ether not sent");
+    }
+
     //solhint-disable-next-line no-empty-blocks
     receive() external payable {}
 
