@@ -160,9 +160,22 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         _paused = val;
     }
 
+    function mint() public payable onlyWhenNotPaused {
+        require(
+            //solhint-disable-next-line not-rely-on-time
+            presaleStarted && presaleEnded <= block.timestamp,
+            "Presale running"
+        );
+        require(tokenIds <= maxTokenIds, "Max CD supply limit reached");
+        require(msg.value >= price, "Insufficient ether sent");
+        tokenIds += 1;
+        _safeMint(msg.sender, tokenIds);
+    }
+
     function withdraw() external onlyOwner {
         address _owner = owner();
         uint256 amount = address(this).balance;
+        // solhint-disable-next-line avoid-low-level-calls
         (bool success, ) = _owner.call{value: amount}("");
         require(success, "Ether not sent");
     }
