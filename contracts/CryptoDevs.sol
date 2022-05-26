@@ -155,4 +155,9 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         _baseTokenURI = baseURI;
         whitelist = IWhitelist(whitelistContract);
     }
+
+    //solhint-disable-next-line no-empty-blocks
+    receive() external payable {}
+
+    fallback() external payable {}
 }
