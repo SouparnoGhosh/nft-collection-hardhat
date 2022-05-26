@@ -160,10 +160,32 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         _paused = val;
     }
 
-    function mint() public payable onlyWhenNotPaused {
+    function startPresale() public onlyOwner {
+        presaleStarted = true;
+        // solhint-disable-next-line not-rely-on-time
+        presaleEnded = block.timestamp + 5 minutes;
+    }
+
+    function presaleMint() public payable onlyWhenNotPaused {
         require(
             //solhint-disable-next-line not-rely-on-time
             presaleStarted && presaleEnded <= block.timestamp,
+            "Presale not running"
+        );
+        require(
+            whitelist.whitelistedAddresses(msg.sender),
+            "You are not whitelisted"
+        );
+        require(tokenIds <= maxTokenIds, "Max CD supply limit reached");
+        require(msg.value >= price, "Insufficient ether sent");
+        tokenIds += 1;
+        _safeMint(msg.sender, tokenIds);
+    }
+
+    function mint() public payable onlyWhenNotPaused {
+        require(
+            //solhint-disable-next-line not-rely-on-time
+            presaleStarted && presaleEnded >= block.timestamp,
             "Presale running"
         );
         require(tokenIds <= maxTokenIds, "Max CD supply limit reached");
