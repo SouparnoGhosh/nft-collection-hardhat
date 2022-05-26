@@ -144,6 +144,11 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
     bool public presaleStarted;
     uint256 public presaleEnded;
 
+    modifier onlyWhenNotPaused() {
+        require(!_paused, "Minting is Paused");
+        _;
+    }
+
     constructor(string memory baseURI, address whitelistContract)
         ERC721("CryptoDevs", "CD")
     {
